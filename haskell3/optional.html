@@ -1,0 +1,63 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><!--This file was converted to xhtml by LibreOffice - see http://cgit.freedesktop.org/libreoffice/core/tree/filter/source/xslt for the code.-->
+<head ><meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8"/>
+<title xml:lang="en-US">Lab 3 &mdash; Optional material</title><style type="text/css">
+.T1 {margin:0;padding:0;border:0;font-family:'Lucida Console', monospace}
+	</style></head><body>
+<h2 class="Heading_20_2"><a id="a__Optional_Material"><span/></a>Optional Material</h2>
+As you have seen in the previous section, the Caesar Cipher is not a very safe encryption method.
+In this section, security will be upgraded a little.
+<h3 class="Heading_20_3"><a id="a__Exercises"><span/></a>Exercises</h3>
+<ol start="13">
+<li>Write a function <span class="T1">splitEachFive :: String -&gt; [String] </span>that splits a string into substrings
+of length five. Fill out the last part with copies of the character ’X’ to make it as long as the
+others.
+<pre>
+Main&gt; splitEachFive "Secret Message"
+["Secre", "t Mes", "sageX"]</pre>
+<li>The library function <span class="T1">transpose</span> switches the rows and columns of a list of lists:
+<pre>
+Main&gt; transpose ["123","abc","ABC"]
+["1aA","2bB", "3cC"]
+Main&gt; transpose ["1","22","333"]
+["123","23","3"]</pre>
+If the rows in a list of lists are of the same length, transposing it twice returns the original
+one. Use your <span class="T1">splitEachFive</span> function to write a <span class="T2">Q</span>uickCheck property to test this. Also,
+show with an example that this is not always the case when the rows are of different lengths.
+<li>Write a function <span class="T1">encrypt :: Int -&gt; String -&gt; String</span> that encrypts a string by first applying the Caesar Cipher, then splitting it into pieces of length five, transposing, and putting
+the pieces together as a single string.
+<li> Write a function to decrypt messages encrypted in the way above.
+<p><b>Hint:</b> The last action of the previous function is to put the transposed list of strings back
+together. You will need a helper function to undo this (it is not <span class="T1">splitEachFive</span>).
+</ol>
+<h2 class="Heading_20_2"><a id="a__Challenge__Optional_"><span/></a>Challenge (Optional)</h2>
+While the strengthened encryption thwarts a cracker searching for candidate substrings in the cipher-
+text, it is of little help against a cracker looking at the cipher-text letter-by-letter. If the cracker
+can determine the relationship between a letter and its enciphered counterpart, she can compute the
+offset used in enciphering. Now it turns out that in English prose, certain letters are more common
+than others, so if we compare the relative frequencies of enciphered letters with those of prose, we
+can often determine the Caesar offset. For instance,
+<pre>
+Main&gt; encypt 12 "Secret Message"
+"EFMQYSOQQDEXQEX"</pre>
+The most frequent letter in the above cipher-text is ‘Q’. This letter lies 12 places to the right in the
+alphabet from the letter ‘E’, and the letter ‘E’ is the most common letter in English prose.
+<h3 class="Heading_20_3"><a id="a__Exercises"><span/></a>Exercises</h3>
+<ol start="17">
+<li> To perform decipherings based on this method,
+first write a function
+<span class="T1">countFreqs :: String -&gt; [(Char, Int)]</span> to compute the frequency of each character in
+the input string:
+<pre>
+Main&gt; countFreqs "Secret Message"
+[(’S’,1),(’e’,4),(’c’,1),(’r’,1),(’t’,1)
+,(’ ’,1),(’M’,1),(’s’,2),(’a’,1),(’g’,1)]</pre>
+<li> Next, write a function <span class="T1">freqDecipher :: String -&gt; [String]</span> which tries to decrypt a
+string encrypted using encrypt. It should use <span class="T1">countFreqs</span> to rank the candidates which
+will decipher to ‘E’, from most frequent to least, and then use <span class="T1">decrypt</span> to produce a ranked
+list of potential dicipherings.
+<pre>
+Main&gt; freqDecipher (encrypt 20 "To be or not to be")
+["JERUEHDEJJERUTT","EZMPZCYZEEZMPOO","WREHRUQRWWREHGG"
+,"TOBEORNOTTOBEDD",...]
+ </pre>
+</ol></body></html>
