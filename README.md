@@ -1,1 +1,1 @@
-#haskell
+#Haskell labs at UniBuc
