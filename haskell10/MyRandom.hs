@@ -25,8 +25,9 @@ uniformNat n = uint
 -- fst $ uniformNat 100 zeroSeed   ==  41
 
 -- Exercise Seven:  implement bind
+-- a -> StdGen -> (b,StdGen) -> StdGen -> (a,StdGen) -> StdGen -> (b,StdGen) 
 bind :: (a -> MyRandom b) -> (MyRandom a -> MyRandom b)
-bind = undefined
+bind g f s = g f1 s1 where (f1,s1) = f s 
 
 -- Using # instead of * for composition to avoid ambiguities
 (#) :: (b -> MyRandom c) -> (a -> MyRandom b) -> (a -> MyRandom c)
@@ -38,7 +39,7 @@ doubleRandom = uniformNat # uniformNat
 
 -- Exercise Eight: implement unit -- leave the generator unodified
 unit :: a -> MyRandom a
-unit = undefined
+unit x s = (x,s)
 
 
 -- lift --- lifting functions
@@ -73,3 +74,8 @@ test_lift = quickCheck $ check_lift (+2) (*3)
 
 -- Exercise Eleven(c):  Write the uniformFromTo function in do notation
 
+instance Monad (MyRandom state) where
+	return a = MyRandom (\s -> (a,s))
+	ma >>= k = MyRandomg
+	  where g state = let (val,state') = apply ma state
+	                   in apply (k val) state'

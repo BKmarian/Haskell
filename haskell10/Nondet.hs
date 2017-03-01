@@ -12,7 +12,7 @@ sqrts x = [y, negate y]
 
 -- Exercise Four:  Apply the function on all input values and aggregate the results
 bind :: (a -> Nondet b) -> (Nondet a -> Nondet b)
-bind = undefined
+bind f = concat . map f
 
 -- Using # instead of * for composition to avoid ambiguities
 (#) :: (b -> Nondet c) -> (a -> Nondet b) -> (a -> Nondet c)
@@ -20,7 +20,7 @@ g' # f' = bind g' . f'
 
 -- Exercise Five: Provide minimal context for the given value
 unit :: a -> Nondet a
-unit = undefined
+unit x = [x]
 
 -- lift --- lifting functions
 lift :: (a -> b) -> (a -> Nondet b)
@@ -40,8 +40,8 @@ solveQuadratic a b c = lift (/(2*a)) # lift (b+) # sqrts $ delta
 -- (a) f # unit = unit # f = f 
 -- (b) lift g # lift f = lift (g.f)
 check_unit1, check_unit2 :: (Complex Float -> Nondet (Complex Float)) -> Complex Float -> Bool
-check_unit1 f x = undefined
-check_unit2 f x = undefined
+check_unit1 f x = (f # unit) x == u x && u x == f x where u = unit # f
+check_unit2 = undefined -- f x = (lift g # lift f) x == (lift (g.f)) x
 
 test_unit1, test_unit2 :: IO ()
 test_unit1 = quickCheck $ check_unit1 sqrts 
@@ -60,3 +60,7 @@ test_lift = quickCheck $ check_lift (+2) (*3)
 
 -- Exercise Eleven(b):  Write the solution to the quadratic equation in do notation
 
+instance Monad Nondet where  
+    return x = [x]  
+    xs >>= f = concat (map f xs)  
+    fail _ = []  
